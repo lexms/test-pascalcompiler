@@ -1,4 +1,4 @@
-program Tes1(input, output);
+program Tes3(input,output);
 var
     i1:integer;
     r1:real;

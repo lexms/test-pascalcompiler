@@ -1,14 +1,9 @@
-program Hitung;
-VAR
-    a : integer;
-    b : integer;
-    c : integer;
-
-BEGIN
+program Hitung(input,output);
+var
+c,b,a : integer;
+begin
     a:=5;
     b:=b+2;
-    IF (a>3) THEN
+    if a>3 then
         c:=4;
-
-    write(c);
-END.
+end.

@@ -191,7 +191,7 @@ begin
     fileout:='2KOMENTAR.PAS';
     if fileout='' then
     begin
-        i:= Pos(s,filein);
+        i:= Pos('.',filein);
         fileout:=copy(filein,1,i);
         fileout:=fileout+'OUT';
     end;
@@ -324,7 +324,7 @@ begin
             while k[i]=' ' do inc(i);
 
             case k[i] of
-                'A'..'Z','a'..'z':
+                'A'..'Z','a'..'z': {identifier}
                     begin
                         strID := k[i];
                         inc(i);
@@ -1289,7 +1289,7 @@ begin
                             Scan;
                             simpan:=token;
                             c:=1;  
-                    end
+                    end // if token='T_TTK2'
                     else
                         error(12);
                 end{else token='T_KOMA'}
@@ -1390,7 +1390,7 @@ begin
 
 end;{procedure BLOCK}
 
-procedure PRG;
+procedure PRG; //program
 begin
     if token='T_PRG' then
     begin
@@ -1411,7 +1411,7 @@ begin
                             Scan
                         else
                             error(21);
-                    end;{while}
+                    end;//while
                     if token='T_TUTUP' then
                     begin
                         Scan;
@@ -1427,10 +1427,10 @@ begin
                 end
                 else
                     error(21);
-            end
+            end //if token='T_BUKA'
             else 
                 error(9);
-        end
+        end //if token='T_ID'
         else
             error(21);
     end{if token='T_PRG'}

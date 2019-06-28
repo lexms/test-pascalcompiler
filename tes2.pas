@@ -1,4 +1,4 @@
-program tes2(input,output);
+program Tes2(input,output);
 var
     i1:integer
     r1:real
@@ -12,7 +12,5 @@ begin
     h:=2;
     repeat
         e:=e*h;
-    until e>=1000;
-    
-
+    until (e>=1000);    
 end.
