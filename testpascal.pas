@@ -11,7 +11,7 @@ uses dos, crt;
 
 const
 {Keywords List}
-    keywords: array [0..27] of string[10]=
+    keywords: array [0..30] of string[10]=
     (
         'AND',
         'BEGIN',
@@ -40,13 +40,16 @@ const
         'OF',
         'FILE',
         'SET',
-        'RECORD'
+        'RECORD',
+        'PROCEDURE',
+        'FUNCTION',
+        'WRITE'
     );
 
 
 
 {Keywords Table}
-Table_kw: array [0..27] of string[20] =
+Table_kw: array [0..30] of string[20] =
     (
         'T_AND',
         'T_BEGIN',
@@ -75,7 +78,10 @@ Table_kw: array [0..27] of string[20] =
         'T_OF',
         'T_FILE',
         'T_SET',
-        'T_RECORD'
+        'T_RECORD',
+        'T_PROC',
+        'T_FUNC',
+        'T_WRITE'
     );
 
 type
@@ -321,10 +327,16 @@ begin
     begin
         if i<=length(k) then
         begin
-            while k[i]=' ' do inc(i);
+            while k[i]=' ' do inc(i);// skip space
+
+            {
+                i akan menjadi pointer untuk scan tiap karakter 
+                pindah ketika sudah habis BARISnya sesuai k
+            
+            }
 
             case k[i] of
-                'A'..'Z','a'..'z': {identifier}
+{letter}       'A'..'Z','a'..'z': 
                     begin
                         strID := k[i];
                         inc(i);
@@ -345,13 +357,14 @@ begin
                             if cek_key(index,w)=false then
                                 token := 'T_ID'
                             else
-                                token := Table_kw[index];                            
+                                token := Table_kw[index];//automated add token                            
                         end
                         else
                             token := 'T_ID';
+                        
                     end;{'A'..'Z','a'..'z'}
                     
-                '0'..'9':
+{digit}        '0'..'9':
                     begin
                         strID := k[i];
                         inc(i);
@@ -372,6 +385,7 @@ begin
                             end
                             else
                                 error(27);
+                            
                             exit;
                         end;
 
@@ -434,6 +448,7 @@ begin
                                     else
                                         error(28);
                                 end;{else k[i+1]='.'}
+                            
                             end;{.}
                         'E','e':
                             begin
@@ -466,6 +481,8 @@ begin
                             end{'E','e':}
                             else
                             begin
+                                        write('---test T_INT');
+                                    
                                 if length(strID)>5 then
                                     error(27)
                                 else
@@ -482,6 +499,7 @@ begin
                             end;{else 'E','e':}
                         end;{case k[i] of}
                     end;{'0'..'9'}
+
                 '+':begin
                         strID:=k[i];
                         token:='T_PLUS';
@@ -508,6 +526,7 @@ begin
                         strID:=k[i];
                         token:='T_EQUAL';
                         inc(i);
+                        
                     end;
 
                 '<':begin
@@ -544,6 +563,7 @@ begin
                     end;{end '>'}
                 
                 ':':begin
+                            
                         strID := k[i];
                         inc(i);
                         if k[i] = '=' then
@@ -651,7 +671,7 @@ begin
                     readln(TextIn,k);
                     inc(countLine);
                     writeln(k);
-                    {writeln(TextOut,k);}
+                    //writeln(TextOut,k);
                     i:=1;
                     Scan;
                 end
@@ -1018,6 +1038,7 @@ var
     elemen  :isiTSimbol;
     ind     :integer;
 begin
+            
     if token='T_ID' then
     begin
         VARIABEL;
@@ -1029,8 +1050,10 @@ begin
         else
             error(14);
     end;{VARIABEL}
+
     if token='T_BEGIN' then
     begin
+     
         Scan;
         STATEMENT;
         while token='T_TIKOM' do
@@ -1272,6 +1295,7 @@ begin
                         Scan;
                         simpan:=token;
                         TIPE(elemen);
+                        
 
                         simpan:=token;
 
@@ -1366,6 +1390,7 @@ begin
 
         if token='T_BEGIN' then
         begin
+            write('---test beg');
             Scan;
             STATEMENT;
             while token='T_TIKOM' do
@@ -1457,6 +1482,7 @@ begin
 
         i:=1;
         Scan;
+        
         PRG;
         writeln(TextOut);
         writeln;
@@ -1519,5 +1545,6 @@ begin
     writeln(TextOut);
     parse;
     simbol;
+
     readln;
 end.

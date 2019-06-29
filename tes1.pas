@@ -7,8 +7,8 @@ var
     r4:real;
     c1:char;
     i2:integer;
-begin
-    e:=1;
+BEGIN
+    e:=2;
     h:=2;
     repeat
         e:=e*h;
