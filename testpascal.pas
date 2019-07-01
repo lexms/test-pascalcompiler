@@ -86,6 +86,7 @@ Table_kw: array [0..31] of string[20] =
         'T_STRING'
     );
 
+    {
     assembly: array [0..20] of string[20] =
     (   
         'LDA', //load
@@ -111,8 +112,10 @@ Table_kw: array [0..31] of string[20] =
         'JNZ', //Jump if Accumulator Not Zero 
         'JZ' // Jump if Accumulator Zero
     );
-
-    operator_list: array[0..16] of string[20]=
+    }
+    
+    {
+        operator_list: array[0..16] of string[20]=
     (
         ':=',
         '+',
@@ -133,6 +136,7 @@ Table_kw: array [0..31] of string[20] =
         'NOT'
 
     );
+    }
 
     operator_arithmatic: array[0..5] of string[20]=
     (
@@ -201,7 +205,7 @@ var
     t : stack;
     temp_infix:string;
 
-    counter_quadruples:integer;
+    //counter_quadruples:integer;
     TextAssembly:text;
 
 
@@ -301,6 +305,8 @@ var
 begin
     Val(strID,value,code);
     Str(value,s);
+    If Code<>0 then
+        Writeln ('Error Val at position ',code,' : ',Paramstr(1)[Code]);
 
     {bandingkan apakah hasil Val sama dengan sebelumnya}
     if (s=strID) and (value<=32767) then
@@ -317,6 +323,8 @@ var
     code:integer;
 begin
     Val(strID,value,code);
+    If Code<>0 then
+        Writeln ('Error Val at position ',code,' : ',Paramstr(1)[Code]);
     if(value>1.7E+38) or (value<2.9E-39) then
         StrToReal := false
     else
@@ -546,6 +554,8 @@ begin
                             if StrToInt(strID) then
                             begin
                                 val(strID, angka_i, code);
+                                If Code<>0 then
+                                    Writeln ('Error Val at position ',code,' : ',Paramstr(1)[Code]);
                                 token:= 'T_INT';
                             end
                             else
@@ -577,6 +587,7 @@ begin
                                             {ubah menjadi bilangan real}
                                             if StrToReal(strID) then begin
                                                 val(strID,angka_r,code);
+                                                
                                                 token:='T_REAL';
                                             end
                                             else
@@ -1204,7 +1215,7 @@ end;{procedure FACTOR}
 
 procedure TERM;
 var
-    savestrID :string[3];
+    //savestrID :string[3];
     count:integer;
 begin
     FACTOR;
@@ -1214,7 +1225,7 @@ begin
     begin
         for count:=1 to length(strID) do
             strID[count]:=upcase(strID[count]);
-        savestrID:=strID;
+        //savestrID:=strID;
         Scan;
         FACTOR;
     end;{while}
@@ -1222,12 +1233,12 @@ end;{procedure TERM}
 
 procedure Simple_exp;
 var
-    savestrID:string[2];
+    //savestrID:string[2];
     count:integer;
 begin
     if (token='T_PLUS') or (token = 'T_MINUS') then
     begin
-        savestrID:=strID;
+        //savestrID:=strID;
         Scan;
     end;
     TERM;
@@ -1235,7 +1246,7 @@ begin
     begin
         for count:=1 to length(strID) do 
             strID[count] := UpCase(strID[count]);
-        savestrID:=strID;
+        //savestrID:=strID;
         Scan;
         TERM;
     end;    
@@ -1243,7 +1254,7 @@ end;{procedure Simple_exp}
 
 procedure EXPRESSION;
 var
-    savestrID:string[2];
+    //savestrID:string[2];
     count:integer;
 begin
     Simple_exp;
@@ -1253,7 +1264,7 @@ begin
     begin
         for count:=1 to length(strID) do
             strID[count]:=upcase(strID[count]);
-        savestrID:=strID;
+        //savestrID:=strID;
         Scan;
         Simple_exp;
     end;
@@ -1757,7 +1768,7 @@ procedure quadruples_generate(temp_infix:string);
 var
     count:integer;
     after_equal:integer;
-    operator_found:boolean;
+    
     i_search,i_search2:integer;
     predict:integer;
     tupelOpr:string;
@@ -1776,21 +1787,20 @@ begin
     
     i_search2:=0+after_equal;
     repeat          
-        operator_found:= false;
+        
         i_search:=0;
         repeat          
             if (temp_infix[i_search2] = operator_arithmatic[i_search]) then // find in opearator arithmatic
             begin
                 //writeln('temp_infix: ',temp_infix[i_search2] , ' OAR = ', operator_arithmatic[i_search]);
-                operator_found:=true;
-                quadruples_list[count].operator1:= temp_infix[i_search2];
+                                quadruples_list[count].operator1:= temp_infix[i_search2];
                 
                 inc(count);
                 //writeln(count);
             end
             else
             begin
-                operator_found:=false;
+                
                 if count=predict then
                 begin
                     quadruples_list[count].operand1:= quadruples_list[predict-2].temp_var;
@@ -1820,7 +1830,7 @@ begin
         writeln(TextAssembly,'');
     end;
     writeln(TextAssembly,'');
-    writeln(TextAssembly,'======Assembly======');
+    writeln(TextAssembly,'===========Assembly============');
     for count:= 1 to predict do
     begin
         case quadruples_list[count].operator1 of
@@ -1872,7 +1882,7 @@ begin
     assign(TextOut,fileout);
     rewrite(TextOut);
     filename_symboltable:='1SYMBOLTABLE.pas';
-    filename_assembly:='3ASSEMBLYCODE.pas';
+    filename_assembly:='3ASSEMBLYCODE.txt';
     assign(simb,filename_symboltable);
     rewrite(simb);
 

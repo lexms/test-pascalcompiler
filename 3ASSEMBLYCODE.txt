@@ -5,7 +5,7 @@ Postfix: A:=DC*BE/+
   /,  B,  E, T2,
   +, T1, T2,  A,
 
-======Assembly======
+===========Assembly============
 LDA   D
 MUL   C
 STO  T1
