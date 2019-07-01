@@ -1766,7 +1766,7 @@ begin
     assign(TextAssembly,filename_assembly);
     rewrite(TextAssembly);
 
-    //find '= 
+    //find '='' 
     after_equal:=Pos('=', temp_infix) ;
     count:=1;
     writeln(TextAssembly,'Postfix: ', temp_infix);
