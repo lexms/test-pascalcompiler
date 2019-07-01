@@ -1,16 +1,33 @@
 program Tes1(input,output);
 var
-    i1:integer;
-    r1:real;
-    e,h:integer;
-    r3:real;
-    r4:real;
-    c1:char;
-    i2:integer;
+    A,B,C,D,E:integer;
+
 BEGIN
-    e:=2;
-    h:=2;
-    repeat
-        e:=e*h;
-    until (e>=1000);    
+    A:=D*C+B/E;
+    A:=2;
+    B:=3;
+    C:=4;
+    D:=5;
+    E:=6;
+    
 end.
+
+//D C * B E / +
+
+{
+    *,  D,  C, T1,
+    /,  B,  E, T2,
+    +, T1, T2,  A,
+    
+    LDA D
+    MUL C
+    STO T1
+    LDA B
+    DIV E
+    STO T2
+    LDA T1
+    ADD T2
+    STO A
+
+
+}

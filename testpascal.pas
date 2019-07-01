@@ -7,11 +7,11 @@
 
 program testpascal(input, output);
 
-uses dos, crt;
+uses dos, crt, Classes, SysUtils;
 
 const
 {Keywords List}
-    keywords: array [0..30] of string[10]=
+    keywords: array [0..31] of string[10]=
     (
         'AND',
         'BEGIN',
@@ -43,13 +43,14 @@ const
         'RECORD',
         'PROCEDURE',
         'FUNCTION',
-        'WRITE'
+        'WRITE',
+        'STRING'
     );
 
 
 
 {Keywords Table}
-Table_kw: array [0..30] of string[20] =
+Table_kw: array [0..31] of string[20] =
     (
         'T_AND',
         'T_BEGIN',
@@ -81,9 +82,69 @@ Table_kw: array [0..30] of string[20] =
         'T_RECORD',
         'T_PROC',
         'T_FUNC',
-        'T_WRITE'
+        'T_WRITE',
+        'T_STRING'
     );
 
+    assembly: array [0..20] of string[20] =
+    (   
+        'LDA', //load
+        'STO', //store
+        'ADD', //add
+        'SUBB', //substract
+        'MUL', //multiply
+        'DIV', //divide
+        'INC', //increase
+        'DEC', //decreace
+        'MOV', //move
+        'ORL', // OR Logic
+        'ANDL', //AND logic
+
+        'CJNE', // Compare and Jump if Not Equal 
+        'DJNZ', //Decrement and Jump if Not Zero
+        'JB', //Jump if Bit Set  
+        'JBC', // Jump if Bit Set and Clear Bit 
+        'JC', //Jump if Carry Set 
+        'JMP', // Jump to Address  
+        'JNB', // Jump if Not Bit Set
+        'JNC', //Jump if Carry Not Set 
+        'JNZ', //Jump if Accumulator Not Zero 
+        'JZ' // Jump if Accumulator Zero
+    );
+
+    operator_list: array[0..16] of string[20]=
+    (
+        ':=',
+        '+',
+        '-',
+        '*',
+        '/',
+        'DIV',
+        'MOD',
+        '=',
+        '<>',
+        '>',
+        '<',
+        '>=',
+        '<=',
+        'AND',
+        'OR',
+        'XOR',
+        'NOT'
+
+    );
+
+    operator_arithmatic: array[0..5] of string[20]=
+    (
+        '+',
+        '-',
+        '*',
+        '/',
+        '(',
+        ')'
+    );
+
+    Max_Elemen= 255;
 type
     {Symbol Table Structure}
     isiTSimbol = RECORD
@@ -93,7 +154,24 @@ type
                     ref     : integer;
                 end;
 
+    quadruples_notation = RECORD
+                            operator1:string[5];
+                            operand1:string[5];
+                            operand2:string[5];
+                            temp_var:string[5];
+                        end;
+
+    isi = string[255];
+
+    stack = record
+                hasl : isi;
+                top : 0..Max_Elemen
+            end;
+
 var
+    quadruples_list : array[0..100] of quadruples_notation;
+    filename_symboltable,
+    filename_assembly,
     filein,                 {nama file keluaran}
     fileout :string[79];    {nama file masukan}
     TextIn,                 {var file masukan}
@@ -117,6 +195,85 @@ var
     errorBool   :boolean;
     countLine   :integer;
     repairBool  :boolean;
+    
+
+    Infix : isi; {* notasi infix *}
+    t : stack;
+    temp_infix:string;
+
+    counter_quadruples:integer;
+    TextAssembly:text;
+
+
+function ALIANSI (macam_op : char) : integer;
+
+begin
+    case macam_op of
+    '^' : ALIANSI := 3; {* pangkat *}
+    '*', '/' : ALIANSI := 2; {* kali atau bagi *}
+    '+', '-' : ALIANSI := 1; {* plus atau minus *}
+    '(' : ALIANSI := 0 {* kurung buka *}
+    end;
+end;
+
+procedure PUSH (var t : stack; Elemen : char);
+
+begin
+    t.top := t.top + 1;
+    t.hasl[t.top] := Elemen
+end;
+
+function POP (var t : stack) : char;
+
+begin
+    POP := t.hasl[t.top];
+    t.top := t.top - 1
+end;
+
+procedure convert_infix_to_prefix(Infix: isi);
+
+var
+i : integer;
+Kar : char;
+opr : set of char;
+
+begin
+    temp_infix:='';
+    opr := ['^']+['*']+['/']+['+']+['-'];
+    for i := 1 to length(Infix) do
+    begin
+        Kar := Infix[i]; {* Kurung buka. Push ke dalam tumpukan *}
+        if Kar = '(' then PUSH(t, Kar)
+        else if Kar = ')' then
+        begin
+            while T.hasl[t.top] <> '(' do
+            begin
+                //write(POP(T):2);
+                temp_infix:=temp_infix+POP(T);
+            end;
+            //temp_infix := POP(T)
+        end
+        else if Kar in opr then
+        begin
+            while (t.top <> 0) and (ALIANSI(Kar) <= ALIANSI(T.hasl[t.top])) do
+            begin
+                //write(POP(T):2);
+                temp_infix:=temp_infix+POP(T);
+            end;
+            PUSH(T, Kar)
+        end
+        else if Kar <> ' ' then
+        begin
+            //write(Kar:2)
+            temp_infix:=temp_infix+Kar;
+        end;
+    end;
+    if t.top <> 0 then
+        repeat
+            //write(POP(T):2);
+            temp_infix:=temp_infix+POP(T);
+        until t.top = 0;
+end;
 
 function cek_key(var ind:integer; w:string):boolean;
 {cek strID apakah keyword atau identifier biasa}
@@ -126,7 +283,7 @@ begin
     ind:=0;
     sama:=false;
 
-    while (ind<=23) and (not sama) do
+    while (ind<=31) and (not sama) do
         if w=keywords[ind] THEN
             sama:=true
         else inc(ind);
@@ -234,7 +391,6 @@ begin
         19  : write(TextOut,'"*)" expected');
         20  : write(TextOut,'"}" expected');
         21  : write(TextOut,'Identifier expected');
-
         22  : write(TextOut,'Error in expression');
         23  : write(TextOut,'Duplicate Identifier');
         24  : write(TextOut,'Error in statement');
@@ -244,6 +400,7 @@ begin
         28  : write(TextOut,'Syntax Error');
         29  : write(TextOut,'Unknown Identifier');
         30  : write(TextOut,'Unknown Symbol');
+        31  : write(TextOut,'Duplicate Identifier');
         
         53  : write(TextOut,'Until expected');
         54  : write(TextOut,'DO expected');
@@ -272,7 +429,7 @@ begin
         close(TextIn);
         close(TextOut);
         writeln;
-        writeln('Silahkan lihat file ',fileout,' ... dan file 1TABEL.pas');
+        writeln('Silahkan lihat file ',fileout,', ',filename_symboltable,', dan ',filename_assembly);
         halt(1);
     end;
 end;{procedure RecoveryError}
@@ -320,6 +477,10 @@ var
     w       : string[10];
     keluar  : boolean;
 
+    i_search:integer;
+    i_search2:integer;
+    operator_found:boolean;
+
 begin
     if repairBool then
         repairBool:= false
@@ -355,9 +516,13 @@ begin
 
                             {cek dalam tabel keywords}
                             if cek_key(index,w)=false then
-                                token := 'T_ID'
+                            begin
+                                token := 'T_ID';
+                            end
                             else
-                                token := Table_kw[index];//automated add token                            
+                            begin
+                                token := Table_kw[index];//automated add token  
+                            end;                        
                         end
                         else
                             token := 'T_ID';
@@ -392,7 +557,7 @@ begin
                         {cek apakah integer atau real}
 
                         case k[i] of
-                        '.' : 
+                        '.' : //real
                             begin
                                 if k[i+1]='.'then
                                     error(16)
@@ -450,7 +615,7 @@ begin
                                 end;{else k[i+1]='.'}
                             
                             end;{.}
-                        'E','e':
+                        'E','e': //real
                             begin
                                 strID:=strID+k[i];
                                 inc(i);
@@ -479,10 +644,10 @@ begin
                                 else
                                     error(28); 
                             end{'E','e':}
-                            else
+                            else // integer
                             begin
-                                        write('---test T_INT');
-                                    
+                                
+                                
                                 if length(strID)>5 then
                                     error(27)
                                 else
@@ -490,8 +655,10 @@ begin
                                     {ubah menjadi bilangan integer}
                                     if StrToInt(strID) then
                                     begin
+                                        //write('---test T_INT');
                                         val(strID,angka_i,code);
                                         token:='T_INT';
+                                        
                                     end
                                     else
                                         error(27);
@@ -670,9 +837,43 @@ begin
                 begin
                     readln(TextIn,k);
                     inc(countLine);
+
                     writeln(k);
+
+                    {find line with operator in infix}    
+                    i_search2:=0;
+                    repeat          
+                        operator_found:= false;
+                        i_search:=0;
+                        repeat          
+                            if (k[i_search2] = operator_arithmatic[i_search]) then // find in operator arithmatic
+                            begin
+                                //writeln('k: ',k[i_search2] , ' OAR = ', operator_arithmatic[i_search]);
+                                operator_found:=true;
+
+                                break;
+                            end
+                            else
+                                operator_found:=false;
+
+                            inc(i_search);
+                        until((i_search >= length(operator_arithmatic)) or (operator_found));
+
+                        inc(i_search2);
+                    until((i_search2 >= length(k)) or (operator_found));
+                    
+                    
+                    IF operator_found THEN
+                    begin
+                        infix:=k;
+                        delete(infix,length(k),1); // delete semi colon
+                        convert_infix_to_prefix(infix);
+                        
+                    end;
+
                     //writeln(TextOut,k);
                     i:=1;
+
                     Scan;
                 end
                 else
@@ -728,9 +929,30 @@ end;{procedure Init_Sim}
 
 procedure InputTab(elemen:isiTSimbol);
 {memasukkan identifier ke dalam Tabel Simbol}
+var
+    count:integer;
+    ada:boolean;
 begin
-    inc(CountSim);
-    TSimbol[CountSim]:=elemen;
+    ada:= false;
+    count:=1;
+
+    //uniqueness check
+    while (count<=CountSim) and (not ada) do
+    begin
+        if(TSimbol[count].nama=elemen.nama) then
+        begin
+            ada:=true;
+            error(31);
+        end
+        else
+            inc(count);
+    end;
+
+    if not ada then
+    begin
+        inc(CountSim);
+        TSimbol[CountSim]:=elemen;
+    end;
 end;{procedure InputTab}
 
 function InTSimbol(var elemen : isiTSimbol; var ind:integer):boolean;
@@ -936,7 +1158,9 @@ begin
             error(24);
     end
     else
-        error(29)
+    begin
+        error(29);
+    end;    
 end;{procedure VARIABEL}
 
 procedure EXPRESSION; forward;
@@ -972,7 +1196,10 @@ begin
                     VARIABEL
                 else Un_const
             else
+            begin
                 error(29);
+
+            end;    
 end;{procedure FACTOR}
 
 procedure TERM;
@@ -1039,7 +1266,7 @@ var
     ind     :integer;
 begin
             
-    if token='T_ID' then
+    if token='T_ID'  then
     begin
         VARIABEL;
         if token ='T_ASG' then
@@ -1053,7 +1280,6 @@ begin
 
     if token='T_BEGIN' then
     begin
-     
         Scan;
         STATEMENT;
         while token='T_TIKOM' do
@@ -1217,7 +1443,7 @@ begin
     if token='T_CONST' then
     begin
         Scan;
-        if token<>'T_ID' then
+        if (token<>'T_ID') then
             error(21)
         else
         begin
@@ -1264,7 +1490,7 @@ begin
         end;
     end;{type}
 
-    if token='T_VAR' then
+    if (token='T_VAR') then
     begin
         c:=1;
         Scan;
@@ -1390,7 +1616,7 @@ begin
 
         if token='T_BEGIN' then
         begin
-            write('---test beg');
+            {write('---test beg');}
             Scan;
             STATEMENT;
             while token='T_TIKOM' do
@@ -1417,9 +1643,11 @@ end;{procedure BLOCK}
 
 procedure PRG; //program
 begin
+    
     if token='T_PRG' then
     begin
         Scan;
+        
         if token='T_ID' then
         begin
             Scan;
@@ -1489,11 +1717,12 @@ begin
 
         if errorBool then
         begin
-            writeln('Silahkan lihat file ',fileout,' ... dan file 1TABEL.pas')
+            writeln('Silahkan lihat file ',fileout,', ',filename_symboltable,', dan ',filename_assembly);
         end
         else begin
             writeln(TextOut, 'Sukses ...');
             writeln('Parsing Sukses !!!');
+            writeln('Silahkan lihat file ',filename_symboltable,' dan ',filename_assembly);
         end;
         close(TextIn);
         close(TextOut);
@@ -1524,20 +1753,127 @@ begin
     close(simb);
 end;{procedure simbol}
 
+procedure quadruples_generate(temp_infix:string);
+var
+    count:integer;
+    after_equal:integer;
+    operator_found:boolean;
+    i_search,i_search2:integer;
+    predict:integer;
+    tupelOpr:string;
+begin
+    
+    assign(TextAssembly,filename_assembly);
+    rewrite(TextAssembly);
+
+    //find '= 
+    after_equal:=Pos('=', temp_infix) ;
+    count:=1;
+    writeln(TextAssembly,'Postfix: ', temp_infix);
+    writeln(TextAssembly,'');
+    //predict how many count
+    predict:= (length(temp_infix)-3) div 3 + 1 ;
+    
+    i_search2:=0+after_equal;
+    repeat          
+        operator_found:= false;
+        i_search:=0;
+        repeat          
+            if (temp_infix[i_search2] = operator_arithmatic[i_search]) then // find in opearator arithmatic
+            begin
+                //writeln('temp_infix: ',temp_infix[i_search2] , ' OAR = ', operator_arithmatic[i_search]);
+                operator_found:=true;
+                quadruples_list[count].operator1:= temp_infix[i_search2];
+                
+                inc(count);
+                //writeln(count);
+            end
+            else
+            begin
+                operator_found:=false;
+                if count=predict then
+                begin
+                    quadruples_list[count].operand1:= quadruples_list[predict-2].temp_var;
+                    quadruples_list[count].operand2:= quadruples_list[predict-1].temp_var;
+                    quadruples_list[count].temp_var:= temp_infix[1];
+                end
+                else
+                begin
+                    quadruples_list[count].operand1:= temp_infix[i_search2-2];
+                    quadruples_list[count].operand2:= temp_infix[i_search2-1];
+                    quadruples_list[count].temp_var:= 'T'+IntToStr(count);
+                end;                
+            end;
+            inc(i_search);
+        until((i_search > length(operator_arithmatic)));
+
+        inc(i_search2);
+    until((i_search2 > length(temp_infix)));
+
+    writeln(TextAssembly,'======Quadruples Notation======');
+    for count:= 1 to predict do
+    begin
+        write(TextAssembly,quadruples_list[count].operator1:3,',');
+        write(TextAssembly,quadruples_list[count].operand1:3,',');
+        write(TextAssembly,quadruples_list[count].operand2:3,',');
+        write(TextAssembly,quadruples_list[count].temp_var:3,',');
+        writeln(TextAssembly,'');
+    end;
+    writeln(TextAssembly,'');
+    writeln(TextAssembly,'======Assembly======');
+    for count:= 1 to predict do
+    begin
+        case quadruples_list[count].operator1 of
+            '+':
+                begin
+                    tupelOpr:='ADD';
+
+                end;
+            '-':
+                begin
+                    tupelOpr:='SUBB';
+
+                end;
+            '*':
+                begin
+                    tupelOpr:='MUL';
+
+                end;
+            '/':
+                begin
+                    tupelOpr:='DIV';
+
+                end;
+        end;
+
+        writeln(TextAssembly,'LDA', quadruples_list[count].operand1:4);
+        writeln(TextAssembly, tupelOpr, quadruples_list[count].operand2:4);
+        writeln(TextAssembly,'STO', quadruples_list[count].temp_var:4);
+    end;//for
+    close(TextAssembly);
+end;
+
+
+
+
 {======================== MAIN PROGRAM ========================}
 begin
     input_file;
     Init_Sim;               {initialize symbol table}
     CountRConst:=0;         {initialize counter RConst table}
     no_temp:=0;             {initialize counter temp}
+    
+    
     clrscr;
     assign(TextIn,filein);
+
     reset(TextIn);
 
     assign(TextOut,fileout);
     rewrite(TextOut);
-
-    assign(simb,'1TABEL.pas');
+    filename_symboltable:='1SYMBOLTABLE.pas';
+    filename_assembly:='3ASSEMBLYCODE.pas';
+    assign(simb,filename_symboltable);
     rewrite(simb);
 
     writeln(TextOut, 'Hasil parse untuk file "',filein,'"');
@@ -1546,5 +1882,6 @@ begin
     parse;
     simbol;
 
+    quadruples_generate(temp_infix);
     readln;
 end.
