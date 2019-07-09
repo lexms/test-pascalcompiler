@@ -1,0 +1,2 @@
+k wont move to next when
+asignment and then identifier

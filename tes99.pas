@@ -1,4 +1,4 @@
-program Tes1(input,output);
+program Tes99(input,output);
 var
     i1:integer;
     r1:real;
@@ -8,7 +8,7 @@ var
     c1:char;
     i2:integer;
 BEGIN
-    e:=2;
+    e:2;
     h:=3;
     repeat
         e:=e*h;

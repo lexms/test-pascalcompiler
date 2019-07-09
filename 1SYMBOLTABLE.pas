@@ -8,8 +8,11 @@ Index        Nama       Objek        Tipe         Ref    0                      
     5        TRUE       CONST     BOOLEAN           1
     6       FALSE       CONST     BOOLEAN           0
     7      MAXINT       CONST     INTEGER       32767
-    8           A         VAR     INTEGER           0
-    9           B         VAR     INTEGER           0
-   10           C         VAR     INTEGER           0
-   11           D         VAR     INTEGER           0
-   12           E         VAR     INTEGER           0
+    8          I1         VAR     INTEGER           0
+    9          R1         VAR        REAL           0
+   10           E         VAR     INTEGER           0
+   11           H         VAR     INTEGER           0
+   12          R3         VAR        REAL           0
+   13          R4         VAR        REAL           0
+   14          C1         VAR        CHAR           0
+   15          I2         VAR     INTEGER           0

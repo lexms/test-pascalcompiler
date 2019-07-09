@@ -342,7 +342,7 @@ var
 begin
     repeat
         clrscr;
-        write('Masukkan nama file yang akan diParse, e.g:tes1.pas :');
+        write('Masukkan nama file yang akan di Compile e.g:tes1.pas :');
         readln(filein);
         s:= FSearch(filein,GetEnv('PATH'));
         if s=''then
@@ -434,7 +434,9 @@ begin
     end
     else
     begin
+        
         close(TextIn);
+        
         close(TextOut);
         writeln;
         writeln('Silahkan lihat file ',fileout,', ',filename_symboltable,', dan ',filename_assembly);
@@ -848,7 +850,7 @@ begin
                 begin
                     readln(TextIn,k);
                     inc(countLine);
-
+                    //writeln('---test countline = ' , countline);
                     writeln(k);
 
                     {find line with operator in infix}    
@@ -1862,6 +1864,8 @@ begin
     end;//for
     close(TextAssembly);
 end;
+
+
 
 
 

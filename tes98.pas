@@ -1,4 +1,4 @@
-program Tes1(input,output);
+program Tes98(input,output);
 var
     A,B,C,D,E:integer;
 
