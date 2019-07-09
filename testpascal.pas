@@ -1795,14 +1795,13 @@ begin
             if (temp_infix[i_search2] = operator_arithmatic[i_search]) then // find in opearator arithmatic
             begin
                 //writeln('temp_infix: ',temp_infix[i_search2] , ' OAR = ', operator_arithmatic[i_search]);
-                                quadruples_list[count].operator1:= temp_infix[i_search2];
+                quadruples_list[count].operator1:= temp_infix[i_search2];
                 
                 inc(count);
                 //writeln(count);
             end
             else
-            begin
-                
+            begin    
                 if count=predict then
                 begin
                     quadruples_list[count].operand1:= quadruples_list[predict-2].temp_var;
@@ -1863,6 +1862,16 @@ begin
         writeln(TextAssembly,'STO', quadruples_list[count].temp_var:4);
     end;//for
     close(TextAssembly);
+end;
+
+procedure optimize;
+var
+
+
+begin
+    if 
+
+
 end;
 
 
