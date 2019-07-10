@@ -8,7 +8,7 @@ var
     c1:char;
     i2:integer;
 BEGIN
-    e:2;
+    e:=2;
     h:=3;
     repeat
         e:=e*h;

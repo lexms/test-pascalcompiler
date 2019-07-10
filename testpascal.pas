@@ -748,6 +748,7 @@ begin
                         inc(i);
                         if k[i] = '=' then
                         begin
+                            //writeln('---test t_asg ');
                             strID:=strID + k[i];
                             token:='T_ASG';
                             inc(i);
@@ -937,7 +938,7 @@ begin
     TSimbol[7].objek:='CONST';
     TSimbol[7].tipe:='INTEGER';
     TSimbol[7].ref:=32767;
-    CountSim:=7;    
+    CountSim:=8;    
 end;{procedure Init_Sim}
 
 procedure InputTab(elemen:isiTSimbol);
@@ -1297,6 +1298,7 @@ begin
         STATEMENT;
         while token='T_TIKOM' do
         begin
+           // writeln('---test while token');
             Scan;
             STATEMENT;
         end;
@@ -1372,7 +1374,7 @@ begin
         else
             error(29);
         
-        if token<>'T_ASSIGN' then
+        if token<>'T_ASG' then
             error(14)
         else
         begin
@@ -1629,13 +1631,14 @@ begin
 
         if token='T_BEGIN' then
         begin
-            {write('---test beg');}
+            //write('---test beg');
             Scan;
             STATEMENT;
             while token='T_TIKOM' do
             begin
                 Scan;
                 STATEMENT;
+                //write('---test tikom');
             end;
 
             if token='T_ID' then
@@ -1864,15 +1867,7 @@ begin
     close(TextAssembly);
 end;
 
-procedure optimize;
-var
 
-
-begin
-    if 
-
-
-end;
 
 
 

@@ -1,2 +1,5 @@
 k wont move to next when
 asignment and then identifier
+
+jika ada : trus ada = dia akan berhenti hingga titik koma ;
+
