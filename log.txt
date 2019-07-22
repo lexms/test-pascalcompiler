@@ -3,3 +3,10 @@ asignment and then identifier
 
 jika ada : trus ada = dia akan berhenti hingga titik koma ;
 
+
+di ubah dari 
+ while token='T_TIKOM' do
+menjadi
+while token<>'T_TIKOM' do 
+
+add scan setelah statement dan block di if an
