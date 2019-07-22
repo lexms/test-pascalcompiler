@@ -1309,7 +1309,6 @@ begin
         begin
             Scan;
             EXPRESSION;
-            Scan;
             writeln('======ASG Parsed=======');
         end
         else

@@ -10,7 +10,4 @@ Index        Nama       Objek        Tipe         Ref    0                      
     7      MAXINT       CONST     INTEGER       32767
     8                                               0
     9           A         VAR     INTEGER           0
-   10           B         VAR     INTEGER           0
-   11           C         VAR     INTEGER           0
-   12           D         VAR     INTEGER           0
-   13           E         VAR     INTEGER           0
+   10           C         VAR     INTEGER           0
